@@ -1,0 +1,8 @@
+*.swp
+*~
+*.orig
+*BACKUP*
+*REMOTE*
+*LOCAL*
+*BASE*
+.DS_Store
