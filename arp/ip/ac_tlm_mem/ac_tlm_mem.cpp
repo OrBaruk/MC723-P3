@@ -38,8 +38,6 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-/// Namespace to isolate memory from ArchC
-using user::ac_tlm_mem;
 
 /// Constructor
 ac_tlm_mem::ac_tlm_mem( sc_module_name module_name , int k ) :

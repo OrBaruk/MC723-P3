@@ -31,8 +31,8 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef AC_TLM_MEM_H_
-#define AC_TLM_MEM_H_
+#ifndef AC_TLM_BUS_H_
+#define AC_TLM_BUS_H_
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -51,9 +51,6 @@ using tlm::tlm_transport_if;
 
 //#define DEBUG
 
-/// Namespace to isolate memory from ArchC
-namespace user_bus
-{
 
 /// A TLM memory
 class ac_tlm_bus :
@@ -121,6 +118,5 @@ private:
 
 };
 
-};
 
-#endif //AC_TLM_MEM_H_
+#endif //AC_TLM_BUS_H_

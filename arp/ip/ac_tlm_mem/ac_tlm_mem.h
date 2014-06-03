@@ -51,10 +51,6 @@ using tlm::tlm_transport_if;
 
 //#define DEBUG
 
-/// Namespace to isolate memory from ArchC
-namespace user
-{
-
 /// A TLM memory
 class ac_tlm_mem :
   public sc_module,
@@ -121,6 +117,5 @@ private:
 
 };
 
-};
 
 #endif //AC_TLM_MEM_H_

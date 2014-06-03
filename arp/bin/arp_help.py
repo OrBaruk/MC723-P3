@@ -10,4 +10,3 @@ def shorthelp():
 #  	"+ctext(['green'],"--delete")+" | "+ctext(['green'],"--make")+" | 
 # 	"+ctext(['green'],"--test")+" ]"
 	print
-
