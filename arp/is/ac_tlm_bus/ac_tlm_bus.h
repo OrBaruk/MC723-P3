@@ -41,6 +41,7 @@
 #include <systemc>
 // ArchC includes
 #include "ac_tlm_protocol.H"
+#include "ac_tlm_port.H"
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -59,11 +60,8 @@ class ac_tlm_bus :
 {
 public:
   /// Exposed port with ArchC interface
-  sc_export< ac_tlm_transport_if > target_export;
-  /// Internal write
-  ac_tlm_rsp_status writem( const uint32_t & , const uint32_t & );
-  /// Internal read
-  ac_tlm_rsp_status readm( const uint32_t & , uint32_t & );
+  sc_export< ac_tlm_transport_if > cpu0_target_export;
+  ac_tlm_port mem_port;
 
   /**
    * Implementation of TLM transport method that
@@ -72,29 +70,13 @@ public:
    * @param request is a received request packet
    * @return A response packet to be send
   */
-  ac_tlm_rsp transport( const ac_tlm_req &request ) {
-
+  ac_tlm_rsp transport( const ac_tlm_req &request )
+  {
     ac_tlm_rsp response;
-
-    switch( request.type ) {
-    case READ :     // Packet is a READ one
-      #ifdef DEBUG  // Turn it on to print transport level messages
-    cout << "Transport READ at 0x" << hex << request.addr << " value ";
-    cout << response.data << endl;
-      #endif
-      response.status = readm( request.addr , response.data );
-      break;
-    case WRITE:     // Packet is a WRITE
-      #ifdef DEBUG
-    cout << "Transport WRITE at 0x" << hex << request.addr << " value ";
-    cout << request.data << endl;
-      #endif
-      response.status = writem( request.addr , request.data );
-      break;
-    default :
-      response.status = ERROR;
-      break;
-    }
+    
+    // Aqui sera adicionado um switch(request.addr) para definir para qual component o
+    // request ira, no momento redireciona todos os requests para a memoria
+    response = mem_port->transport(request);
 
     return response;
   }

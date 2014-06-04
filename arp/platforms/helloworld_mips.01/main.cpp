@@ -28,33 +28,34 @@ int sc_main(int ac, char *av[])
 {
 
   //!  ISA simulator
-  mips1 mips1_proc1("mips1");
+  mips1 mips1_proc0("mips0");
   ac_tlm_mem mem("mem");
   ac_tlm_bus bus("bus");
 
 #ifdef AC_DEBUG
-  ac_trace("mips1_proc1.trace");
+  ac_trace("mips1_proc0.trace");
 #endif 
 
-  // bus.mem_port(mem.target_export);
-  mips1_proc1.DM_port(bus.target_export);
+  mips1_proc0.DM_port(bus.cpu0_target_export);
 
-  mips1_proc1.init(ac, av);
+  bus.mem_port(mem.target_export);
+  
+  mips1_proc0.init(ac, av);
   cerr << endl;
 
   sc_start();
 
-  mips1_proc1.PrintStat();
+  mips1_proc0.PrintStat();
   cerr << endl;
 
 #ifdef AC_STATS
-  mips1_proc1.ac_sim_stats.time = sc_simulation_time();
-  mips1_proc1.ac_sim_stats.print();
+  mips1_proc0.ac_sim_stats.time = sc_simulation_time();
+  mips1_proc0.ac_sim_stats.print();
 #endif 
 
 #ifdef AC_DEBUG
   ac_close_trace();
 #endif 
 
-  return mips1_proc1.ac_exit_status;
+  return mips1_proc0.ac_exit_status;
 }

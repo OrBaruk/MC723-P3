@@ -42,47 +42,17 @@
 /// Constructor
 ac_tlm_bus::ac_tlm_bus( sc_module_name module_name , int k ) :
   sc_module( module_name ),
-  target_export("iport")
+  cpu0_target_export("iport1"),
+  mem_port("mem", k)
 {
     /// Binds target_export to the memory
-    target_export( *this );
-
-    /// Initialize memory vector
-    memory = new uint8_t[ k ];
-    for(k=k-1;k>0;k--) memory[k]=0;
-
+    cpu0_target_export( *this );
 }
 
 /// Destructor
 ac_tlm_bus::~ac_tlm_bus() {
-
-  delete [] memory;
 }
 
-/** Internal Write
-  * Note: Always write 32 bits
-  * @param a is the address to write
-  * @param d id the data being write
-  * @returns A TLM response packet with SUCCESS
-*/
-ac_tlm_rsp_status ac_tlm_bus::writem( const uint32_t &a , const uint32_t &d )
-{
-  *((uint32_t *) &memory[a]) = *((uint32_t *) &d);
-  return SUCCESS;
-}
-
-/** Internal Read
-  * Note: Always read 32 bits
-  * @param a is the address to read
-  * @param d id the data that will be read
-  * @returns A TLM response packet with SUCCESS and a modified d
-*/
-ac_tlm_rsp_status ac_tlm_bus::readm( const uint32_t &a , uint32_t &d )
-{
-  *((uint32_t *) &d) = *((uint32_t *) &memory[a]);
-
-  return SUCCESS;
-}
 
 
 
