@@ -20,37 +20,70 @@ const char *archc_version="2.0beta1";
 const char *archc_options="-abi -dy ";
 
 #include  <systemc.h>
+#include  <malloc.h>
+#include  <string.h>
 #include  "mips1.H"
 #include  "ac_tlm_mem.h"
 #include  "ac_tlm_bus.h"
+
+void avcpy(int ac, char** av_dest, char** av_src){
+    for(int i = 0; i < ac; i++)
+        strcpy(av_dest[i], av_src[i]);
+}
 
 int sc_main(int ac, char *av[])
 {
 
   //!  ISA simulator
   mips1 mips1_proc0("mips0");
+  mips1 mips1_proc1("mips1");
+  mips1 mips1_proc2("mips2");
+  mips1 mips1_proc3("mips3");
   ac_tlm_mem mem("mem");
   ac_tlm_bus bus("bus");
 
 #ifdef AC_DEBUG
   ac_trace("mips1_proc0.trace");
+  ac_trace("mips1_proc1.trace");
+  ac_trace("mips1_proc2.trace");
+  ac_trace("mips1_proc3.trace");
 #endif 
 
   mips1_proc0.DM_port(bus.cpu0_target_export);
+  mips1_proc1.DM_port(bus.cpu0_target_export);
+  mips1_proc2.DM_port(bus.cpu0_target_export);
+  mips1_proc3.DM_port(bus.cpu0_target_export);
 
   bus.mem_port(mem.target_export);
+
+  char **av2 = (char **)malloc(ac*sizeof(char *));
+  for(int i = 0; i < ac; i++)
+      av2[i] = (char *)malloc(strlen(av[i])*sizeof(char));
   
-  mips1_proc0.init(ac, av);
+  avcpy(ac, av2, av);
+  mips1_proc0.init(ac, av2);
+  avcpy(ac, av2, av);
+  mips1_proc1.init(ac, av2);
+  avcpy(ac, av2, av);
+  mips1_proc2.init(ac, av2);
+  avcpy(ac, av2, av);
+  mips1_proc3.init(ac, av2);
   cerr << endl;
 
   sc_start();
 
   mips1_proc0.PrintStat();
+  mips1_proc1.PrintStat();
+  mips1_proc2.PrintStat();
+  mips1_proc3.PrintStat();
   cerr << endl;
 
 #ifdef AC_STATS
   mips1_proc0.ac_sim_stats.time = sc_simulation_time();
   mips1_proc0.ac_sim_stats.print();
+  mips1_proc1.ac_sim_stats.print();
+  mips1_proc2.ac_sim_stats.print();
+  mips1_proc3.ac_sim_stats.print();
 #endif 
 
 #ifdef AC_DEBUG
