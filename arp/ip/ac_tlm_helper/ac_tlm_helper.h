@@ -32,16 +32,19 @@ class ac_tlm_helper :
 public:
   	// Exposed port with ArchC interface
 	sc_export< ac_tlm_transport_if > target_export;
-
+  ac_tlm_rsp_status write_helper( const uint32_t &d );
+  ac_tlm_rsp_status read_helper( uint32_t &d );
+	
+	
 	ac_tlm_rsp transport( const ac_tlm_req &request) {
 		ac_tlm_rsp response;
 
 		switch(request.type) {
 			case READ:
-				response.status = read( response.data );
+				response.status = read_helper( response.data );
 			break; 			
 			case WRITE:
-				response.status = write( response.data );
+				response.status = write_helper( response.data );
 			break;
 
 			default :
@@ -54,9 +57,8 @@ public:
   	/** 
    	* Default constructor.
    	*/
-  	ac_tlm_mutex( sc_module_name module_name);
-private:
-	int lock;
+  	ac_tlm_helper( sc_module_name module_name);
+  	~ac_tlm_helper();
 };
 
 

@@ -17,8 +17,10 @@ ac_tlm_helper::ac_tlm_helper(sc_module_name module_name) :
 ac_tlm_helper::~ac_tlm_helper() {
 }
 
-void ac_tlm_helper::write( const uint32 &d ) {
+ac_tlm_rsp_status ac_tlm_helper::write_helper( const uint32_t &d ) {
+	return SUCCESS;
 }
 
-void ac_tlm_helper::read( uint32 &d ) {
+ac_tlm_rsp_status ac_tlm_helper::read_helper( uint32_t &d ) {
+	return SUCCESS;
 }

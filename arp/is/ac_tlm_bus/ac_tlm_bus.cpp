@@ -47,6 +47,7 @@ ac_tlm_bus::ac_tlm_bus( sc_module_name module_name , int k ) :
   cpu2_target_export("iport3"),
   cpu3_target_export("iport4"),
   mem_port("mem", k),
+  helper_port("help", k),
   mutex_port("mutex", k)
 {
     /// Binds target_export to the memory

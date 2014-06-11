@@ -51,7 +51,8 @@ using tlm::tlm_transport_if;
 //////////////////////////////////////////////////////////////////////////////
 
 //#define DEBUG
-#define MUTEX_ADDR 0x10000000
+#define MUTEX_ADDR 	 0x10000000
+#define HELPER_ADDR	 0x20000000
 
 /// A TLM memory
 class ac_tlm_bus :
@@ -66,7 +67,7 @@ public:
 	sc_export< ac_tlm_transport_if > cpu3_target_export;
 	ac_tlm_port mem_port;
 	ac_tlm_port mutex_port;
-
+	ac_tlm_port helper_port;
 
 	/**
 	 * Implementation of TLM transport method that
@@ -86,7 +87,9 @@ public:
 			case MUTEX_ADDR:
 				response = mutex_port->transport(request);
 			break;
-
+			case HELPER_ADDR:
+				response = helper_port->transport(request);
+			break;
 			default:
 				response = mem_port->transport(request);
 			break;

@@ -26,6 +26,8 @@ const char *archc_options="-abi -dy ";
 #include  "ac_tlm_mem.h"
 #include  "ac_tlm_mutex.h"
 #include  "ac_tlm_bus.h"
+#include  "ac_tlm_helper.h"
+
 
 void avcpy(int ac, char** av_dest, char** av_src){
     for(int i = 0; i < ac; i++)
@@ -42,7 +44,9 @@ int sc_main(int ac, char *av[])
   mips1 mips1_proc3("mips3");
   ac_tlm_mem mem("mem");
   ac_tlm_bus bus("bus");
+  ac_tlm_helper helper("help");
   ac_tlm_mutex mutex("mutex");
+  
 
 #ifdef AC_DEBUG
   ac_trace("mips1_proc0.trace");
@@ -58,7 +62,8 @@ int sc_main(int ac, char *av[])
 
   bus.mem_port(mem.target_export);
   bus.mutex_port(mutex.target_export);
-
+	bus.helper_port(helper.target_export);
+	
   char **av2 = (char **)malloc(ac*sizeof(char *));
   for(int i = 0; i < ac; i++)
       av2[i] = (char *)malloc(strlen(av[i])*sizeof(char));

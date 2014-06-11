@@ -16,7 +16,7 @@ OBJS := $(SRCS:.cpp=.o)
 lib: all
 	ar r lib$(TARGET).a $(OBJS)
 #------------------------------------------------------
-all: $(OBJS) ac_tlm_mutex.h
+all: $(OBJS) ac_tlm_helper.h
 #------------------------------------------------------
 clean:
 	rm -f $(OBJS) *~ *.o *.a
