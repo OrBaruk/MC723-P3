@@ -12,4 +12,6 @@ ac_tlm_mutex::ac_tlm_mutex(sc_module_name module_name) :
 {
 	// Binds target_export to the counter
 	target_export(*this);
+
+	ac_tlm_mutex::lock = 0;
 }

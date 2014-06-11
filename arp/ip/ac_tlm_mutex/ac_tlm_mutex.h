@@ -34,22 +34,18 @@ public:
 	sc_export< ac_tlm_transport_if > target_export;
 
 	ac_tlm_rsp transport( const ac_tlm_req &request) {
-
-		static int lock = 0;
 		ac_tlm_rsp response;
 
 		switch(request.type) {
-			case READ :
+			case READ:
 				response.status = SUCCESS;
 				response.data = lock;
-				printf("MUTEX -> read | lock = %d \n", lock);
 				lock = 1;
 			break; 
 			
 			case WRITE:
 				response.status = SUCCESS;
 				lock = request.data;
-				printf("MUTEX -> write | lock = %d\n", lock);
 			break;
 
 			default :
@@ -63,6 +59,8 @@ public:
    	* Default constructor.
    	*/
   	ac_tlm_mutex( sc_module_name module_name);
+private:
+	int lock;
 };
 
 

@@ -93,5 +93,6 @@ int sc_main(int ac, char *av[])
   ac_close_trace();
 #endif 
 
-  return mips1_proc0.ac_exit_status;
+  exit(0);  // Para evitar mensagens de erro ao executar 'make run'
+  return mips1_proc0.ac_exit_status; // Linha nunca executada, incluida por compatibilidade
 }
