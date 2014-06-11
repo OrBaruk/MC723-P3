@@ -1,48 +1,12 @@
-/**
- * @file      ac_tlm_bus.h
- * @author    Bruno de Carvalho Albertini
- *
- * @author    The ArchC Team
- *            http://www.archc.org/
- *
- *            Computer Systems Laboratory (LSC)
- *            IC-UNICAMP
- *            http://www.lsc.ic.unicamp.br/
- *
- * @version   0.1
- * @date      Sun, 02 Apr 2006 08:07:46 -0200
- *
- * @brief     Defines a ac_tlm memory.
- *
- * @attention Copyright (C) 2002-2005 --- The ArchC Team
- *
- *   This library is free software; you can redistribute it and/or
- *   modify it under the terms of the GNU Lesser General Public
- *   License as published by the Free Software Foundation; either
- *   version 2.1 of the License, or (at your option) any later version.
- *
- *   This library is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *   Lesser General Public License for more details.
- *
- *
- */
-
-//////////////////////////////////////////////////////////////////////////////
-
 #ifndef AC_TLM_BUS_H_
 #define AC_TLM_BUS_H_
-
 //////////////////////////////////////////////////////////////////////////////
-
 // Standard includes
 // SystemC includes
 #include <systemc>
 // ArchC includes
 #include "ac_tlm_protocol.H"
 #include "ac_tlm_port.H"
-
 //////////////////////////////////////////////////////////////////////////////
 
 // using statements
@@ -51,9 +15,11 @@ using tlm::tlm_transport_if;
 //////////////////////////////////////////////////////////////////////////////
 
 //#define DEBUG
-#define MUTEX_ADDR 0x10000000
+#define MUTEX_ADDR 			0x10000000
+#define OFFLOAD_STATUS_ADDR 0x10000004
+#define OFFLOAD_INPUT_ADDR  0x10000008
+#define OFFLOAD_OUTPUT_ADDR 0x10000012
 
-/// A TLM memory
 class ac_tlm_bus :
 	public sc_module,
 	public ac_tlm_transport_if // Using ArchC TLM protocol
@@ -66,6 +32,7 @@ public:
 	sc_export< ac_tlm_transport_if > cpu3_target_export;
 	ac_tlm_port mem_port;
 	ac_tlm_port mutex_port;
+	ac_tlm_port offload_port;
 
 
 	/**
@@ -77,17 +44,30 @@ public:
 	*/
 	ac_tlm_rsp transport( const ac_tlm_req &request )
 	{
+		// printf("bus response\n");
 		ac_tlm_rsp response;
 		
-
-		// Aqui sera adicionado um switch(request.addr) para definir para qual component o
-		// request ira, no momento redireciona todos os requests para a memoria
 		switch(request.addr){
 			case MUTEX_ADDR:
 				response = mutex_port->transport(request);
 			break;
 
+			case OFFLOAD_STATUS_ADDR:
+				printf("case offload1\n");
+				response = offload_port->transport(request);
+			break;
+			case OFFLOAD_INPUT_ADDR:
+				printf("case offload2\n");
+				response = offload_port->transport(request);
+			break;
+			
+			case OFFLOAD_OUTPUT_ADDR:
+				printf("case offload3\n");
+				response = offload_port->transport(request);
+			break;
+
 			default:
+				// printf("case default\n");
 				response = mem_port->transport(request);
 			break;
 		}
@@ -103,14 +83,6 @@ public:
 	 *
 	 */
 	ac_tlm_bus( sc_module_name module_name , int k = 5242880 );
-
-	/**
-	 * Default destructor.
-	 */
-	~ac_tlm_bus();
-
-private:
-	uint8_t *memory;
 
 };
 

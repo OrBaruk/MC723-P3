@@ -26,6 +26,7 @@ const char *archc_options="-abi -dy ";
 #include  "ac_tlm_mem.h"
 #include  "ac_tlm_mutex.h"
 #include  "ac_tlm_bus.h"
+#include  "ac_tlm_offload.h"
 
 void avcpy(int ac, char** av_dest, char** av_src){
     for(int i = 0; i < ac; i++)
@@ -36,6 +37,7 @@ int sc_main(int ac, char *av[])
 {
 
   //!  ISA simulator
+  // Cria todos os modulos
   mips1 mips1_proc0("mips0");
   mips1 mips1_proc1("mips1");
   mips1 mips1_proc2("mips2");
@@ -43,6 +45,7 @@ int sc_main(int ac, char *av[])
   ac_tlm_mem mem("mem");
   ac_tlm_bus bus("bus");
   ac_tlm_mutex mutex("mutex");
+  ac_tlm_offload offload("offload");
 
 #ifdef AC_DEBUG
   ac_trace("mips1_proc0.trace");
@@ -51,14 +54,18 @@ int sc_main(int ac, char *av[])
   ac_trace("mips1_proc3.trace");
 #endif 
 
+  // Conecta as CPUs as bus
   mips1_proc0.DM_port(bus.cpu0_target_export);
   mips1_proc1.DM_port(bus.cpu1_target_export);
   mips1_proc2.DM_port(bus.cpu2_target_export);
   mips1_proc3.DM_port(bus.cpu3_target_export);
 
+  // Conecta a bus aos outros modulos
   bus.mem_port(mem.target_export);
   bus.mutex_port(mutex.target_export);
+  bus.offload_port(offload.target_export);
 
+  // Gera argc e argv para os processadores
   char **av2 = (char **)malloc(ac*sizeof(char *));
   for(int i = 0; i < ac; i++)
       av2[i] = (char *)malloc(strlen(av[i])*sizeof(char));
