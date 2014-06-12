@@ -1,5 +1,5 @@
 IP := ac_tlm_mem ac_tlm_mutex ac_tlm_offload
 IS := ac_tlm_bus
 PROCESSOR := mips1
-SW := hello_world
+SW := calc_dist
 WRAPPER := 
