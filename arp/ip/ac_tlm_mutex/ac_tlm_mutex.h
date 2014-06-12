@@ -60,7 +60,7 @@ public:
    	*/
   	ac_tlm_mutex( sc_module_name module_name);
 private:
-	int lock;
+	unsigned int lock;
 };
 
 

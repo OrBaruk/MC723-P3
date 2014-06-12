@@ -15,10 +15,8 @@ using tlm::tlm_transport_if;
 //////////////////////////////////////////////////////////////////////////////
 
 //#define DEBUG
-#define MUTEX_ADDR 			0x10000000
-#define OFFLOAD_STATUS_ADDR 0x10000004
-#define OFFLOAD_INPUT_ADDR  0x10000008
-#define OFFLOAD_OUTPUT_ADDR 0x10000012
+#define MUTEX_ADDR 	 0x500000
+#define OFFLOAD_ADDR 0x500004
 
 class ac_tlm_bus :
 	public sc_module,
@@ -44,30 +42,18 @@ public:
 	*/
 	ac_tlm_rsp transport( const ac_tlm_req &request )
 	{
-		// printf("bus response\n");
 		ac_tlm_rsp response;
-		
+
 		switch(request.addr){
 			case MUTEX_ADDR:
 				response = mutex_port->transport(request);
 			break;
 
-			case OFFLOAD_STATUS_ADDR:
-				printf("case offload1\n");
-				response = offload_port->transport(request);
-			break;
-			case OFFLOAD_INPUT_ADDR:
-				printf("case offload2\n");
+			case OFFLOAD_ADDR:
 				response = offload_port->transport(request);
 			break;
 			
-			case OFFLOAD_OUTPUT_ADDR:
-				printf("case offload3\n");
-				response = offload_port->transport(request);
-			break;
-
 			default:
-				// printf("case default\n");
 				response = mem_port->transport(request);
 			break;
 		}

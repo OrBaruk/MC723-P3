@@ -16,6 +16,8 @@ Locker Includes
 #include "ac_tlm_protocol.H"
 #include "ac_tlm_port.H"
 
+#define CHANGE_ENDIAN(value) (0x00000000 | (value << 24) | ((value << 8) & 0x00FF0000) | ((value >> 8) & 0x0000FF00) | (value >> 24))
+
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -24,9 +26,8 @@ using tlm::tlm_transport_if;
 
 //////////////////////////////////////////////////////////////////////////////
 
-#define OFFLOAD_STATUS_ADDR 0x10000004
-#define OFFLOAD_INPUT_ADDR  0x10000008
-#define OFFLOAD_OUTPUT_ADDR 0x10000012
+#define MUTEX_ADDR 	 0x500000
+#define OFFLOAD_ADDR 0x500004
 
 class ac_tlm_offload :
   public sc_module,
@@ -36,66 +37,36 @@ public:
 	sc_export< ac_tlm_transport_if > target_export;
 
 	ac_tlm_rsp transport( const ac_tlm_req &request ) {
-		printf("REQUEST EM OFFLOAD.H\n");
 		ac_tlm_rsp response;
 
-		switch( request.addr ) {
-			// Programa solicitou o status da computacao
-			case OFFLOAD_STATUS_ADDR:
-				response.status = SUCCESS;
-				response.data = status;
+		switch( request.type ){
+			case WRITE:
+				response.status = writem( request.addr , request.data );
+				execute_operation();
 			break;
 
-			// Programa enviou variavel para ser computada
-			case OFFLOAD_INPUT_ADDR:
-				printf("case: input_adr\n");
-				switch( request.type ){
-					case WRITE:
-						printf("case: WRITE\n");
-						response.status = SUCCESS;
-						input = request.data;
-						status = 1;
-						execute_offload();
-					break;
-
-					default:
-						printf("case: default\n");
-						response.status = ERROR;
-					break;
-				}
-
-			break;
-
-			// Programa requisitou o resultado da computacao
-			case OFFLOAD_OUTPUT_ADDR:
-				switch( request.type ){
-					case READ:
-						response.status = SUCCESS;
-						response.data = output;
-					break;
-
-					default:
-						response.status = ERROR;
-					break;
-				}
-
+			case READ:
+				response.status = readm( request.addr , response.data );
 			break;
 
 			default:
 				response.status = ERROR;
 			break;
 		}
+
+		return response;
 	}
   
 	// Default constructor.
 	ac_tlm_offload( sc_module_name module_name );
 
 private:
-	int status;
-	double input;
-	double output;
+	unsigned int input;
+	unsigned int output;
 
-	void execute_offload();
+	void execute_operation();
+	ac_tlm_rsp_status readm( const uint32_t & , uint32_t & );
+	ac_tlm_rsp_status writem( const uint32_t & , const uint32_t & );
 };
 
 
