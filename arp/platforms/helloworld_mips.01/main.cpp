@@ -66,6 +66,7 @@ int sc_main(int ac, char *av[])
   bus.offload_port(offload.target_export);
 
   // Gera argc e argv para os processadores
+
   char **av2 = (char **)malloc(ac*sizeof(char *));
   for(int i = 0; i < ac; i++)
       av2[i] = (char *)malloc(strlen(av[i])*sizeof(char));
