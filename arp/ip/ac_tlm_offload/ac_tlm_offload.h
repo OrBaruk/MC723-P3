@@ -41,12 +41,12 @@ public:
 
 		switch( request.type ){
 			case WRITE:
-				response.status = writem( request.addr , request.data );
+				response.status = write( request.addr , request.data );
 				execute_operation();
 			break;
 
 			case READ:
-				response.status = readm( request.addr , response.data );
+				response.status = read( request.addr , response.data );
 			break;
 
 			default:
@@ -65,8 +65,8 @@ private:
 	unsigned int output;
 
 	void execute_operation();
-	ac_tlm_rsp_status readm( const uint32_t & , uint32_t & );
-	ac_tlm_rsp_status writem( const uint32_t & , const uint32_t & );
+	ac_tlm_rsp_status read( const uint32_t & , uint32_t & );
+	ac_tlm_rsp_status write( const uint32_t & , const uint32_t & );
 };
 
 
