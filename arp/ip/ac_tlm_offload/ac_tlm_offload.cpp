@@ -23,11 +23,11 @@ void ac_tlm_offload::execute_operation() {
 }
 
 ac_tlm_rsp_status ac_tlm_offload::write(const uint32_t &a, const uint32_t &d){
-	input = CHANGE_ENDIAN(*((uint32_t *) &d));
+	input = __builtin_bswap32(*((uint32_t *) &d));
 	return SUCCESS;
 }
 
 ac_tlm_rsp_status ac_tlm_offload::read( const uint32_t &a, uint32_t &d){
-	*((uint32_t *) &d) = CHANGE_ENDIAN(output);
+	*((uint32_t *) &d) = __builtin_bswap32(output);
 	return SUCCESS;
 }

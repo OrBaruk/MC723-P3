@@ -4,7 +4,7 @@
 #define MUTEX_ADDR 	 0x500000
 #define OFFLOAD_ADDR 0x500004
 #define NUM_PROC 8
-//~ #define OFFLOAD_ATIVO True
+#define OFFLOAD_ATIVO True
 
 #define LOCK while(*lock)
 #define UNLOCK *lock=0
@@ -73,17 +73,19 @@ int main(int argc, char *argv[]) {
 	#ifdef OFFLOAD_ATIVO
 	for(i = 0; i < n/NUM_PROC; i++) {	
 		aux = x1[(n*my_id)/NUM_PROC + i] - x2[(n*my_id)/NUM_PROC + i];
-		offload_function(aux);				 
+		LOCK;
+			*offload = aux; 		
+		UNLOCK;				 
 	}
 	LOCK;
 	need_calc--;
 	UNLOCK;
 	while(need_calc);
 
-	if(my_id == 0){
-		aux = offload_function(0);
+	if(my_id == 0){		
 		LOCK;
-		ans = aux;
+			*offload = 0; 
+			ans = *offload;
 		UNLOCK;
 	}
 	#endif
