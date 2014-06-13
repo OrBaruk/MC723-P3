@@ -12,13 +12,14 @@ ac_tlm_offload::ac_tlm_offload(sc_module_name module_name) :
 {
 	// Binds target_export to the counter
 	target_export(*this);
+	output = 0;
 }
 
 // Funcao que define qual tipo de computacao o offload executa
 void ac_tlm_offload::execute_operation() {
 	//TODO: Implementar a funca que realmente sera utilizada pelo programa
 	// no momento simplesmente eleva um numero ao quadrado
-	output = input * input;
+	output += input * input;
 }
 
 ac_tlm_rsp_status ac_tlm_offload::write(const uint32_t &a, const uint32_t &d){

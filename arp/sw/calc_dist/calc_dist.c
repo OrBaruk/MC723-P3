@@ -4,6 +4,8 @@
 #define MUTEX_ADDR 	 0x500000
 #define OFFLOAD_ADDR 0x500004
 
+#define OFFLOAD_ATIVO True
+
 #define LOCK while(*lock)
 #define UNLOCK *lock=0
 
@@ -37,19 +39,17 @@ void reentrant_print(char* str){
 int n;
 int *x1,*x2;
 unsigned int ans = 0;
-unsigned int aux;
 char *to_print;
 
 int main(int argc, char *argv[]) {
 	int i;
+	unsigned int aux;
 	FILE *fin;
 	int my_id;
-	
 	
 	LOCK;
 	my_id = total_cpu++;
 	UNLOCK;
-
 	
 	switch(my_id){
 		case 0:			
@@ -70,18 +70,40 @@ int main(int argc, char *argv[]) {
 	}	
 	while(!read_input);
 	
-	
-	for(i = 0; i < n/8; i++) {		
-		 //~ aux = offload_function(x1[8*my_id + i] - x2[8*my_id + i]);				 
-		 LOCK;
-		  aux = (x1[8*my_id + i] - x2[8*my_id + i])*(x1[8*my_id + i] - x2[8*my_id + i]);
-			ans += aux;
-		 UNLOCK;
+	// Caso o offload seja utilizado
+	#ifdef OFFLOAD_ATIVO
+	for(i = 0; i < n/8; i++) {	
+		aux = x1[8*my_id + i] - x2[8*my_id + i];
+		offload_function(aux);				 
 	}
 	LOCK;
 	need_calc--;
 	UNLOCK;
 	while(need_calc);
+
+	if(my_id == 0){
+		aux = offload_function(0);
+		LOCK;
+		ans = aux;
+		UNLOCK;
+	}
+	#endif
+
+	// Caso sem o offload
+	#ifndef OFFLOAD_ATIVO
+	for(i = 0; i < n/8; i++) {		
+		aux = (x1[8*my_id + i] - x2[8*my_id + i])*(x1[8*my_id + i] - x2[8*my_id + i]);
+		LOCK;
+		ans += aux;
+		UNLOCK;
+	}
+	LOCK;
+	need_calc--;
+	UNLOCK;
+	while(need_calc);
+	#endif
+
+
 	
 	switch(my_id){
 		case 0:
