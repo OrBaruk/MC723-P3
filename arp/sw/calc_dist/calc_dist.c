@@ -3,8 +3,8 @@
 
 #define MUTEX_ADDR 	 0x500000
 #define OFFLOAD_ADDR 0x500004
-
-#define OFFLOAD_ATIVO True
+#define NUM_PROC 8
+//~ #define OFFLOAD_ATIVO True
 
 #define LOCK while(*lock)
 #define UNLOCK *lock=0
@@ -15,7 +15,7 @@ volatile unsigned int *lock 	 = (unsigned int*) MUTEX_ADDR;
 
 volatile int total_cpu  = 0;
 volatile int read_input = 0;
-volatile int need_calc  = 8;
+volatile int need_calc  = NUM_PROC;
 volatile int finished   = 0;
 
 unsigned int offload_function(unsigned int x){
@@ -51,8 +51,7 @@ int main(int argc, char *argv[]) {
 	my_id = total_cpu++;
 	UNLOCK;
 	
-	switch(my_id){
-		case 0:			
+	if(my_id == 0){		
 			LOCK;
 			fin = fopen("/home/ec2008/ra081994/MC723/MC723-P3/arp/sw/calc_dist/calc_dist.in", "r");			
 			fscanf(fin, " %d", &n);			
@@ -66,14 +65,14 @@ int main(int argc, char *argv[]) {
 			fclose(fin);
 			read_input = 1;
 			UNLOCK;
-			break;
+			
 	}	
 	while(!read_input);
 	
 	// Caso o offload seja utilizado
 	#ifdef OFFLOAD_ATIVO
-	for(i = 0; i < n/8; i++) {	
-		aux = x1[8*my_id + i] - x2[8*my_id + i];
+	for(i = 0; i < n/NUM_PROC; i++) {	
+		aux = x1[(n*my_id)/NUM_PROC + i] - x2[(n*my_id)/NUM_PROC + i];
 		offload_function(aux);				 
 	}
 	LOCK;
@@ -91,10 +90,10 @@ int main(int argc, char *argv[]) {
 
 	// Caso sem o offload
 	#ifndef OFFLOAD_ATIVO
-	for(i = 0; i < n/8; i++) {		
-		aux = (x1[8*my_id + i] - x2[8*my_id + i])*(x1[8*my_id + i] - x2[8*my_id + i]);
+	for(i = 0; i < n/NUM_PROC; i++) {		
+		aux = (x1[(n*my_id)/NUM_PROC + i] - x2[(n*my_id)/NUM_PROC + i])*(x1[(n*my_id)/NUM_PROC + i] - x2[(n*my_id)/NUM_PROC + i]);
 		LOCK;
-		ans += aux;
+			ans += aux;
 		UNLOCK;
 	}
 	LOCK;
@@ -102,11 +101,8 @@ int main(int argc, char *argv[]) {
 	UNLOCK;
 	while(need_calc);
 	#endif
-
-
 	
-	switch(my_id){
-		case 0:
+	if(my_id == 0){
 			LOCK;
 			sprintf(to_print,"\t >> Distancia entre os vetores: %u << \n",ans);
 			UNLOCK;
@@ -116,7 +112,6 @@ int main(int argc, char *argv[]) {
 			free(x2);	
 			finished = 1;
 			UNLOCK;			
-		break;
 	}	
 	
 	while(!finished);
