@@ -28,6 +28,10 @@ public:
 	sc_export< ac_tlm_transport_if > cpu1_target_export;
 	sc_export< ac_tlm_transport_if > cpu2_target_export;
 	sc_export< ac_tlm_transport_if > cpu3_target_export;
+	sc_export< ac_tlm_transport_if > cpu4_target_export;
+	sc_export< ac_tlm_transport_if > cpu5_target_export;
+	sc_export< ac_tlm_transport_if > cpu6_target_export;
+	sc_export< ac_tlm_transport_if > cpu7_target_export;
 	ac_tlm_port mem_port;
 	ac_tlm_port mutex_port;
 	ac_tlm_port offload_port;

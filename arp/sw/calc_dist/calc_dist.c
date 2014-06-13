@@ -13,7 +13,8 @@ volatile unsigned int *lock 	 = (unsigned int*) MUTEX_ADDR;
 
 volatile int total_cpu  = 0;
 volatile int read_input = 0;
-volatile int need_calc  = 0;
+volatile int need_calc  = 8;
+volatile int finished   = 0;
 
 unsigned int offload_function(unsigned int x){
 	unsigned int local_result;
@@ -52,9 +53,8 @@ int main(int argc, char *argv[]) {
 	
 	switch(my_id){
 		case 0:			
-			//~ LOCK;
-			fin = fopen("/home/ec2008/ra081994/MC723/MC723-P3/arp/sw/calc_dist/calc_dist.in", "r");
-			
+			LOCK;
+			fin = fopen("/home/ec2008/ra081994/MC723/MC723-P3/arp/sw/calc_dist/calc_dist.in", "r");			
 			fscanf(fin, " %d", &n);			
 			x1 =  (int *) malloc(n * sizeof(int));
 			x2 =  (int *) malloc(n * sizeof(int));
@@ -65,43 +65,39 @@ int main(int argc, char *argv[]) {
 			
 			fclose(fin);
 			read_input = 1;
-			//~ UNLOCK;
+			UNLOCK;
 			break;
 	}	
 	while(!read_input);
 	
 	
-	for(i = 0; i < n/4; i++) {		
-		 aux = offload_function(x1[4*my_id + i] - x2[4*my_id + i]);		
+	for(i = 0; i < n/8; i++) {		
+		 //~ aux = offload_function(x1[8*my_id + i] - x2[8*my_id + i]);				 
 		 LOCK;
+		  aux = (x1[8*my_id + i] - x2[8*my_id + i])*(x1[8*my_id + i] - x2[8*my_id + i]);
 			ans += aux;
 		 UNLOCK;
 	}
-	need_calc++;
-	while(need_calc < 4);
+	LOCK;
+	need_calc--;
+	UNLOCK;
+	while(need_calc);
 	
 	switch(my_id){
 		case 0:
-			reentrant_print("Proc 0 -> É o lider!!");		
-		break;
-
-		case 1:
-			reentrant_print("Proc 1 -> Hello World!!!");
-		break;
-
-		case 2:
-			reentrant_print("Proc 2 -> Hello World!!!");
-		break;
-
-		case 3:
-			reentrant_print("Proc 3 -> Hello World!!!");
-			sprintf(to_print,"Distancia 2 entre vetores: %u\n",ans);
+			LOCK;
+			sprintf(to_print,"\t >> Distancia entre os vetores: %u << \n",ans);
+			UNLOCK;
 			reentrant_print(to_print);
+			LOCK;
 			free(x1);
 			free(x2);	
+			finished = 1;
+			UNLOCK;			
 		break;
 	}	
 	
+	while(!finished);
 			
 	exit(0); // To avoid cross-compiler exit routine
 	return 0; // Never executed, just for compatibility

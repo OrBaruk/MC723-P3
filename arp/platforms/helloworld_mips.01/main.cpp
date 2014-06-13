@@ -42,6 +42,10 @@ int sc_main(int ac, char *av[])
   mips1 mips1_proc1("mips1");
   mips1 mips1_proc2("mips2");
   mips1 mips1_proc3("mips3");
+  mips1 mips1_proc4("mips4");
+  mips1 mips1_proc5("mips5");
+  mips1 mips1_proc6("mips6");
+  mips1 mips1_proc7("mips7");
   ac_tlm_mem mem("mem");
   ac_tlm_bus bus("bus");
   ac_tlm_mutex mutex("mutex");
@@ -52,6 +56,10 @@ int sc_main(int ac, char *av[])
   ac_trace("mips1_proc1.trace");
   ac_trace("mips1_proc2.trace");
   ac_trace("mips1_proc3.trace");
+  ac_trace("mips1_proc4.trace");
+  ac_trace("mips1_proc5.trace");
+  ac_trace("mips1_proc6.trace");
+  ac_trace("mips1_proc7.trace");
 #endif 
 
   // Conecta as CPUs as bus
@@ -59,6 +67,10 @@ int sc_main(int ac, char *av[])
   mips1_proc1.DM_port(bus.cpu1_target_export);
   mips1_proc2.DM_port(bus.cpu2_target_export);
   mips1_proc3.DM_port(bus.cpu3_target_export);
+  mips1_proc4.DM_port(bus.cpu4_target_export);
+  mips1_proc5.DM_port(bus.cpu5_target_export);
+  mips1_proc6.DM_port(bus.cpu6_target_export);
+  mips1_proc7.DM_port(bus.cpu7_target_export);
 
   // Conecta a bus aos outros modulos
   bus.mem_port(mem.target_export);
@@ -79,6 +91,14 @@ int sc_main(int ac, char *av[])
   mips1_proc2.init(ac, av2);
   avcpy(ac, av2, av);
   mips1_proc3.init(ac, av2);
+  avcpy(ac, av2, av);
+  mips1_proc4.init(ac, av2);
+  avcpy(ac, av2, av);
+  mips1_proc5.init(ac, av2);
+  avcpy(ac, av2, av);
+  mips1_proc6.init(ac, av2);
+  avcpy(ac, av2, av);
+  mips1_proc7.init(ac, av2);
   cerr << endl;
 
   sc_start();
@@ -87,6 +107,10 @@ int sc_main(int ac, char *av[])
   mips1_proc1.PrintStat();
   mips1_proc2.PrintStat();
   mips1_proc3.PrintStat();
+  mips1_proc4.PrintStat();
+  mips1_proc5.PrintStat();
+  mips1_proc6.PrintStat();
+  mips1_proc7.PrintStat();
   cerr << endl;
 
 #ifdef AC_STATS
@@ -95,6 +119,10 @@ int sc_main(int ac, char *av[])
   mips1_proc1.ac_sim_stats.print();
   mips1_proc2.ac_sim_stats.print();
   mips1_proc3.ac_sim_stats.print();
+  mips1_proc4.ac_sim_stats.print();
+  mips1_proc5.ac_sim_stats.print();
+  mips1_proc6.ac_sim_stats.print();
+  mips1_proc7.ac_sim_stats.print();
 #endif 
 
 #ifdef AC_DEBUG
