@@ -4,7 +4,7 @@
 
 include defs.arp
 
-TARGET=helloworld_mips.01
+TARGET=calc_dist.01
 EXE = $(TARGET).x
 
 SRCS := main.cpp
